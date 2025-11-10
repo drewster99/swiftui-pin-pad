@@ -1,5 +1,12 @@
 # SwiftUI PIN Pad
 
+![Platform](https://img.shields.io/badge/platform-iOS%2018%2B%20%7C%20macOS%2015%2B-blue)
+![Swift](https://img.shields.io/badge/Swift-6.2%20%7C%206.1%20%7C%206.0%20%7C%205.9%20%7C%205.8-orange)
+![License](https://img.shields.io/github/license/drewster99/swiftui-pin-pad)
+
+![SPM](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen)
+![Version](https://img.shields.io/github/v/tag/drewster99/swiftui-pin-pad)
+
 A customizable PIN entry component for SwiftUI (iOS 18+, macOS 15+).
 
 <img src="screenshots/pin-pad-in-action.gif" width="402" alt="PIN Pad Demo">

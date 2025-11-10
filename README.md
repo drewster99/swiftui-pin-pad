@@ -15,7 +15,9 @@ dependencies: [
 ```
 
 ## Demo Project
-A demo project is available 
+
+A demo project is available at [swiftui-pin-pad-demo](https://github.com/drewster99/swiftui-pin-pad-demo).
+
 ## Usage
 
 ```swift

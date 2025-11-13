@@ -79,13 +79,46 @@ SwiftUIPINPad(requiredLength: 6) {
 .pinPadButtonSpacing(30)             // Adjust button spacing
 ```
 
+### Cancel button
+
+```swift
+SwiftUIPINPad {
+    Text("Enter PIN")
+} onPINComplete: { pin in
+    return pin == "1234" ? .doNothing : .indicateInvalidPIN
+} onCancel: {
+    // Handle cancel button press
+}
+
+// Or hide the cancel button
+SwiftUIPINPad(showCancelButton: false) {
+    Text("Enter PIN")
+} onPINComplete: { pin in
+    return .doNothing
+}
+```
+
+### External PIN state
+
+```swift
+@State private var currentPIN = ""
+
+SwiftUIPINPad(pin: $currentPIN) {
+    Text("Enter PIN")
+} onPINComplete: { pin in
+    return .doNothing
+}
+```
+
 ## Features
 
 - Configurable PIN length (default: 4)
+- Optional cancel button with callback
+- External PIN state binding
 - Shake animation for invalid PIN
 - Optional letter labels on buttons
 - Customizable spacing
-- Keyboard shortcuts (macOS)
+- Keyboard shortcuts: digits, Delete, Escape
 - Glass button style on iOS 26+ / macOS 26+
 
 ## License

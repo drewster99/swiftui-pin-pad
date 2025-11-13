@@ -31,6 +31,8 @@ public enum ButtonContent {
     case zero
     /// Delete button
     case delete
+    /// Cancel button
+    case cancel
 
     var digit: String {
         switch self {
@@ -45,6 +47,7 @@ public enum ButtonContent {
         case .nine: "9"
         case .zero: "0"
         case .delete: "Delete"
+        case .cancel: "Cancel"
         }
     }
 
@@ -61,12 +64,14 @@ public enum ButtonContent {
         case .nine: "WXYZ"
         case .zero: ""
         case .delete: ""
+        case .cancel: ""
         }
     }
 
     var keyboardShortcut: KeyboardShortcut {
         switch self {
         case .delete: .init(.delete, modifiers: [])
+        case .cancel: .init(.escape, modifiers: [])
         default: .init(KeyEquivalent(Character(digit)), modifiers: [])
         }
     }

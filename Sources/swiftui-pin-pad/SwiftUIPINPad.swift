@@ -20,12 +20,17 @@ public enum PINChangeResponse {
 /// A customizable PIN entry pad with configurable length and callbacks
 public struct SwiftUIPINPad<Title: View>: View {
     let requiredLength: Int
+    let showCancelButton: Bool
     let title: Title
     let onPINChange: (String) -> PINChangeResponse
     let onPINComplete: (String) -> PINChangeResponse
+    let onCancel: () -> Void
 
     /// The PIN string as currently entered
-    @State private var pin: String = ""
+    @Binding private var pin: String
+
+    /// PIN state used if no pin binding was provided in initializer call
+    @State private var internalPIN: String
 
     /// Set to `true` when the password indication shakes to indicate wrong pin
     @State private var isShaking = false
@@ -40,13 +45,16 @@ public struct SwiftUIPINPad<Title: View>: View {
                 }
             Spacer()
                 .frame(height: 25)
-            KeypadView(deleteDisabled: pin.isEmpty) { button in
+            KeypadView(deleteDisabled: pin.isEmpty, showCancelButton: showCancelButton) { button in
                 switch button {
                 case .delete:
                     if pin.count > 0 {
                         _ = pin.removeLast()
                         handlePINChange(onPINChange(pin))
                     }
+                case .cancel:
+                    onCancel()
+
                 default:
                     if pin.count < requiredLength {
                         pin += button.digit
@@ -60,6 +68,7 @@ public struct SwiftUIPINPad<Title: View>: View {
             }
             .disabled(isShaking)
         }
+        .frame(minWidth: 350, idealWidth: 400, maxWidth: 500, minHeight: 775, idealHeight: 800, maxHeight: 825)
     }
 
     /// Creates a PIN pad view
@@ -69,14 +78,30 @@ public struct SwiftUIPINPad<Title: View>: View {
     ///   - onPINChange: Called after each digit entry or deletion
     ///   - onPINComplete: Called when PIN reaches required length
     public init(requiredLength: Int = 4,
-         @ViewBuilder title: () -> Title,
-         onPINChange: @escaping (String) -> PINChangeResponse = { _ in .doNothing },
-         onPINComplete: @escaping (String) -> PINChangeResponse
+                showCancelButton: Bool = true,
+                pin: Binding<String>? = nil,
+                @ViewBuilder title: () -> Title,
+                onPINChange: @escaping (String) -> PINChangeResponse = { _ in .doNothing },
+                onPINComplete: @escaping (String) -> PINChangeResponse,
+                onCancel: @escaping () -> Void = { }
     ) {
         self.requiredLength = requiredLength
         self.title = title()
+        self.showCancelButton = showCancelButton
         self.onPINChange = onPINChange
         self.onPINComplete = onPINComplete
+        self.onCancel = onCancel
+
+        /// Only used if user doesn't provide us a binding for pin
+        let internalPIN = State(initialValue: "")
+        self._internalPIN = internalPIN
+        if let pin {
+            // Use the binding the user provided
+            self._pin = pin
+        } else {
+            // Use our "internal" @State pin data
+            self._pin = internalPIN.projectedValue
+        }
     }
 
     private func shakePINView() {
@@ -117,6 +142,8 @@ public struct SwiftUIPINPad<Title: View>: View {
             // SUCCESSFUL!
             blah = "pin complete SUCCESS"
             return .doNothing
+        } onCancel: {
+            blah = "cancel"
         }
     }
 }

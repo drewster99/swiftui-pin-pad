@@ -15,35 +15,74 @@ internal struct KeypadButton: View {
         self.content = content
     }
 
-    private var buttonStyle: some PrimitiveButtonStyle  {
+    private var requiresCompat: Bool {
         if #available(iOS 26.0, macOS 26.0, *) {
-            return .glass
+            let result = Bundle.main.object(forInfoDictionaryKey: "UIDesignRequiresCompatibility") as? Bool ?? false
+            return result
         } else {
-            return .bordered
+            return false
         }
     }
 
     var body: some View {
-        Button(action: {
-            onButtonPress(content)
-        }, label: {
-            ZStack(alignment: .center) {
-                // placeholder for spacing
-                FormattedKeypadButtonContent(.nine)
-                    .pinPadIncludesButtonLetters(true)
-                    .hidden()
+        if #available(iOS 26.0, macOS 26.0, *), !requiresCompat {
+            Button(action: {
+                onButtonPress(content)
+            }, label: {
+                ZStack(alignment: .center) {
+                    // placeholder for spacing
+                    FormattedKeypadButtonContent(.nine)
+                        .pinPadIncludesButtonLetters(true)
+                        .hidden()
 
-                // actual content
-                FormattedKeypadButtonContent(content)
-            }
-            .contentShape(Rectangle())
-        })
-        .keyboardShortcut(content.keyboardShortcut)
-        .buttonStyle(buttonStyle)
-        .buttonBorderShape(.circle)
+                    // actual content
+                    FormattedKeypadButtonContent(content)
+                }
+                .contentShape(Rectangle())
+            })
+            .keyboardShortcut(content.keyboardShortcut)
+            .buttonStyle(.glass)
+            .buttonBorderShape(.circle)
+        } else {
+            Button(action: {
+                onButtonPress(content)
+            }, label: {
+                ZStack(alignment: .center) {
+                    // placeholder for spacing
+                    FormattedKeypadButtonContent(.nine)
+                        .pinPadIncludesButtonLetters(true)
+                        .hidden()
+
+                    // actual content
+                    FormattedKeypadButtonContent(content)
+                }
+                .contentShape(Rectangle())
+            })
+            .keyboardShortcut(content.keyboardShortcut)
+            .buttonStyle(BouncyOutlineButtonStyle())
+        }
     }
 }
 
+struct BouncyOutlineButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .foregroundColor(.primary)      // regular text color
+            .background(
+                Circle()
+                    .foregroundStyle(.background)
+                    .shadow(color: .primary.opacity(configuration.isPressed ? 0.4 : 0.1), radius: 14.0, x: 2.5, y: 2.5)
+            )
+            .opacity(configuration.isPressed ? 0.3 : 1.0)
+            .scaleEffect(configuration.isPressed ? 1.1 : 1.0)
+            .animation(
+                .spring(response: 0.12, dampingFraction: 0.75),
+                value: configuration.isPressed
+            )
+    }
+}
 internal extension EnvironmentValues {
     @Entry var onButtonPress: (ButtonContent) -> Void = { _ in }
 }

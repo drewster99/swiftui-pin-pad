@@ -27,14 +27,28 @@ public struct SwiftUIPINPad<Title: View>: View {
     let onCancel: () -> Void
 
     /// The PIN string as currently entered
-    @Binding private var pin: String
+    @Binding private var externalPIN: String
 
     /// PIN state used if no pin binding was provided in initializer call
-    @State private var internalPIN: String
+    @State private var internalPIN: String = ""
 
     /// Set to `true` when the password indication shakes to indicate wrong pin
     @State private var isShaking = false
 
+    let useInternalPIN: Bool
+
+    private var pin: String {
+        get {
+            return useInternalPIN ? internalPIN: externalPIN
+        }
+        nonmutating set {
+            if useInternalPIN {
+                internalPIN = newValue
+            } else {
+                externalPIN = newValue
+            }
+        }
+    }
     public var body: some View {
         VStack(spacing: 20) {
             title
@@ -92,15 +106,14 @@ public struct SwiftUIPINPad<Title: View>: View {
         self.onPINComplete = onPINComplete
         self.onCancel = onCancel
 
-        /// Only used if user doesn't provide us a binding for pin
-        let internalPIN = State(initialValue: "")
-        self._internalPIN = internalPIN
         if let pin {
             // Use the binding the user provided
-            self._pin = pin
+            self._externalPIN = pin
+            self.useInternalPIN = false
         } else {
-            // Use our "internal" @State pin data
-            self._pin = internalPIN.projectedValue
+            // Initialize a junk binding that we won't use
+            self._externalPIN = .init(get: { "" }, set: { _ in })
+            self.useInternalPIN = true
         }
     }
 

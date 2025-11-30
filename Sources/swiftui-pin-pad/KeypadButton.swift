@@ -59,12 +59,18 @@ internal struct KeypadButton: View {
                 .contentShape(Rectangle())
             })
             .keyboardShortcut(content.keyboardShortcut)
-            .buttonStyle(BouncyOutlineButtonStyle())
+            .buttonStyle(GentleBounceCircularOutlineButtonStyle())
         }
     }
 }
 
-struct BouncyOutlineButtonStyle: ButtonStyle {
+/// A button style that looks a bit like the liquid glass version for
+/// iOS 26 superficially but acts normal - for use under iPadOS 18
+/// and iOS 26 in `UIDesignRequiresCompatibility` = `YES` mode.
+///
+/// Apple's `.glass` button style doesn't work right when `UIDesignRequiresCompatibility`
+/// is `YES` and the app is running on iPadOS 26+.
+struct GentleBounceCircularOutlineButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(.horizontal, 16)

@@ -82,7 +82,7 @@ public struct SwiftUIPINPad<Title: View>: View {
             }
             .disabled(isShaking)
         }
-        .frame(minWidth: 350, idealWidth: 400, maxWidth: 500, minHeight: 775, idealHeight: 800, maxHeight: 825)
+        .frame(minWidth: 350, idealWidth: 400, maxWidth: 500, minHeight: 700, idealHeight: 800, maxHeight: 825)
     }
 
     /// Creates a PIN pad view

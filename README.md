@@ -121,6 +121,9 @@ SwiftUIPINPad(pin: $currentPIN) {
 - Keyboard shortcuts: digits, Delete, Escape
 - Glass button style on iOS 26+ / macOS 26+
 
+## Notes
+- Enforces minimum size of 350x700, looks for ideal size of 400x800, and max size of 500x825. This seems to work well for all phones and iPads that I've tested
+
 ## License
 
 MIT License
